@@ -1,3 +1,7 @@
+import { GoogleGenerativeAI } from 'https://cdn.jsdelivr.net/npm/@google/generative-ai/dist/index.min.js';
+
+import { GoogleGenerativeAI } from 'https://cdn.jsdelivr.net/npm/@google/generative-ai/dist/index.min.js';
+
 // Ensure pdfjsLib is available
 if (typeof pdfjsLib === 'undefined') {
     console.error("pdf.js library is not loaded correctly.");
@@ -26,6 +30,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const generatedCoverLetterTextarea = document.getElementById('generatedCoverLetter');
     const messageArea = document.getElementById('messageArea'); // For displaying messages/errors
     const clearAllButton = document.getElementById('clearAllButton');
+
+    // --- API Key Storage ---
+    // Load API Key from localStorage on startup
+    const storedApiKey = localStorage.getItem('googleApiKey');
+    if (storedApiKey) {
+        apiKeyInput.value = storedApiKey;
+        showMessage("API Key loaded from local storage.", 'info');
+        setTimeout(clearMessage, 3000);
+    }
+
+    // Save API Key to localStorage whenever it's changed
+    apiKeyInput.addEventListener('input', () => {
+        if (apiKeyInput.value.trim()) {
+            localStorage.setItem('googleApiKey', apiKeyInput.value.trim());
+        } else {
+            // If the key is cleared, remove it from storage
+            localStorage.removeItem('googleApiKey');
+        }
+    });
 
     // --- Utility functions for messages and loading states ---
     function showMessage(text, type = 'info') {
@@ -61,9 +84,10 @@ document.addEventListener('DOMContentLoaded', () => {
         jobDescriptionTextarea.value = '';
         finalResumeOutputDiv.innerHTML = '';
         generatedCoverLetterTextarea.value = '';
+        localStorage.removeItem('googleApiKey'); // Also clear from storage
         clearMessage();
-        showMessage("All fields cleared.", 'info');
-        setTimeout(clearMessage, 3000); // Clear info message after 3 seconds
+        showMessage("All fields and stored API key cleared.", 'info');
+        setTimeout(clearMessage, 3000);
     });
 
 
@@ -127,9 +151,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     soft: ["string"],
                     other: ["string (optional)"]
                 },
-                projects: [{ name: "string", description: "string", technologies: ["string"], link: "string (optional)"} (optional)],
-                certifications: [{ name: "string", issuingOrganization: "string", date: "string (optional)"} (optional)],
-                awards: [{ name: "string", organization: "string", date: "string (optional)"} (optional)]
+                projects: [{ name: "string", description: "string", technologies: ["string"], link: "string (optional)"}],
+                certifications: [{ name: "string", issuingOrganization: "string", date: "string (optional)"}],
+                awards: [{ name: "string", organization: "string", date: "string (optional)"}]
             };
 
             const parserPrompt = `Analyze the following resume text and convert it into a JSON object with this exact structure: ${JSON.stringify(jsonSchema, null, 2)}. Ensure all string values are properly escaped. Here is the text: \n\n${rawText}`;
@@ -237,61 +261,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Gemini API Call Function ---
     async function callGeminiAPI(apiKey, promptText) {
-        // IMPORTANT: Replace with the correct endpoint for the Gemini API model you are using.
-        // This is a general structure. The exact model and API endpoint might differ.
-        // For example, for generative-language API:
-        const model = "gemini-pro"; // Or another appropriate model
-        const apiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
         try {
-            const response = await fetch(apiEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: promptText }] }],
-                    // Optional: Add generationConfig if needed
-                    // generationConfig: {
-                    //   temperature: 0.7,
-                    //   topK: 1,
-                    //   topP: 1,
-                    //   maxOutputTokens: 2048,
-                    // },
-                }),
-            });
+            const genAI = new GoogleGenerativeAI(apiKey);
+            const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash"});
+            const result = await model.generateContent(promptText);
+            const response = await result.response;
+            const text = response.text();
 
-            if (!response.ok) {
-                const errorBody = await response.json();
-                console.error("API Error Response:", errorBody);
-                const errorDetail = errorBody.error?.message || `HTTP error! status: ${response.status}`;
-                if (response.status === 400 && errorDetail.includes("API key not valid")) {
-                     throw new Error("API key not valid. Please pass a valid API key.");
-                }
-                throw new Error(`API call failed: ${errorDetail}`);
-            }
+            // Clean the response if it's wrapped in ```json ... ``` or ``` ... ```
+            let cleanedText = text.replace(/^```json\s*([\s\S]*?)\s*```$/, '$1');
+            cleanedText = cleanedText.replace(/^```([\s\S]*?)```$/, '$1');
 
-            const data = await response.json();
-
-            // Accessing the text part correctly based on Gemini API response structure
-            if (data.candidates && data.candidates.length > 0 &&
-                data.candidates[0].content && data.candidates[0].content.parts &&
-                data.candidates[0].content.parts.length > 0) {
-                let resultText = data.candidates[0].content.parts[0].text;
-
-                // Clean the response if it's wrapped in ```json ... ``` or ``` ... ```
-                resultText = resultText.replace(/^```json\s*([\s\S]*?)\s*```$/, '$1');
-                resultText = resultText.replace(/^```([\s\S]*?)```$/, '$1');
-
-                return resultText.trim();
-            } else {
-                console.error("Unexpected API response structure:", data);
-                throw new Error("Could not extract text from API response. Check console for the full response.");
-            }
-
+            return cleanedText.trim();
         } catch (error) {
             console.error("Error calling Gemini API:", error);
-            throw error; // Re-throw the error to be caught by the caller
+            // Check for specific API key error and provide a user-friendly message
+            if (error.message.includes("API key not valid")) {
+                throw new Error("API key not valid. Please pass a valid API key.");
+            } else if (error.message.includes("400 Bad Request")) {
+                // It's possible the model name is incorrect or the API key is malformed
+                throw new Error("API call failed: Bad Request. Please check your API key and the model name.");
+            }
+            throw error; // Re-throw other errors to be caught by the caller
         }
     }
 
