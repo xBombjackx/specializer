@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Generator & Tailor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>AI Resume Generator & Tailor</h1>
+
+        <div id="messageArea">
+            <!-- Error messages or info messages will be displayed here -->
+        </div>
+
+        <div class="phase">
+            <h2>Phase 1: Parse Resume to JSON</h2>
+            <div>
+                <label for="apiKey">Google AI Studio API Key:</label>
+                <input type="text" id="apiKey" name="apiKey" placeholder="Enter your API key">
+            </div>
+            <div>
+                <label for="resumeFile">Upload Resume (.pdf or .docx):</label>
+                <input type="file" id="resumeFile" name="resumeFile" accept=".pdf,.docx">
+            </div>
+            <div>
+                <label for="parsedResumeJson">Parsed Resume JSON (Editable):</label>
+                <textarea id="parsedResumeJson" rows="15" placeholder="Parsed JSON will appear here..."></textarea>
+            </div>
+        </div>
+
+        <div class="phase">
+            <h2>Phase 2: Tailor Resume & Generate Cover Letter</h2>
+            <div>
+                <label for="jobDescription">Paste Job Description:</label>
+                <textarea id="jobDescription" rows="10" placeholder="Paste job description here..."></textarea>
+            </div>
+            <div class="button-group">
+                <button id="generateTailoredResumeAndCoverLetter">Generate Tailored Resume & Cover Letter</button>
+                <button id="clearAllButton" type="button">Clear All & Start Over</button>
+            </div>
+        </div>
+
+        <div class="phase">
+            <h2>Final Tailored Resume</h2>
+            <div id="finalResumeOutput">
+                <!-- Rendered HTML resume will appear here -->
+            </div>
+        </div>
+
+        <div class="phase">
+            <h2>Generated Cover Letter</h2>
+            <textarea id="generatedCoverLetter" rows="15" placeholder="Generated cover letter will appear here..." readonly></textarea>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js" integrity="sha512-Постоянная ссылка на этот файл не найдена"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.5.0/mammoth.browser.min.js" integrity="sha512-Постоянная ссылка на этот файл не найдена"></script>
+    <script src="script.js"></script>
+</body>
+</html>
