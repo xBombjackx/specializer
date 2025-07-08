@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const generatedCoverLetterTextarea = document.getElementById('generatedCoverLetter');
     const messageArea = document.getElementById('messageArea');
     const clearAllButton = document.getElementById('clearAllButton');
+    const loadingBanner = document.getElementById('loadingBanner'); // Added for loading banner
 
     // --- LLM Configuration and API Key Storage ---
     const configInputs = {
@@ -92,16 +93,22 @@ document.addEventListener('DOMContentLoaded', () => {
         messageArea.innerHTML = '';
     }
 
-    function setLoadingState(isLoading) {
+    function setLoadingState(isLoading, message = "Processing...") {
         generateButton.disabled = isLoading;
         resumeFileInput.disabled = isLoading;
+
         if (isLoading) {
-            if (document.activeElement === generateButton) {
-                showMessage("Processing your request, please wait...", 'info');
+            loadingBanner.textContent = message;
+            loadingBanner.style.display = 'block';
+            // Show specific message in messageArea if it's a direct user action
+            if (document.activeElement === generateButton || (event && event.target === generateButton)) {
+                showMessage(message, 'info');
             } else if (document.activeElement === resumeFileInput || (event && event.target === resumeFileInput)) {
-                showMessage("Processing file, please wait...", 'info');
+                showMessage(message, 'info');
             }
         } else {
+            loadingBanner.style.display = 'none';
+            // Clear messageArea only if no persistent error message is shown
             if (!messageArea.querySelector('.error-message')) {
                 clearMessage();
             }
@@ -141,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
             generatedCoverLetterTextarea.value = "";
             parsedResumeJsonTextarea.value = "";
 
-            setLoadingState(true);
+            setLoadingState(true, "Processing file, please wait...");
             parsedResumeJsonTextarea.value = "Extracting text from file...";
 
             try {
@@ -178,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
                 const parserPrompt = `Analyze the following resume text and convert it into a JSON object with this exact structure: ${JSON.stringify(jsonSchema, null, 2)}. Ensure all string values are properly escaped. Here is the text: \n\n${rawText}`;
 
-                showMessage("Sending to AI for parsing...", 'info');
+                setLoadingState(true, "Sending to AI for parsing..."); // Update banner
                 parsedResumeJsonTextarea.value = "Sending to AI for parsing...";
                 const parsedJson = await callLLMAPI(parserPrompt);
                 parsedResumeJsonTextarea.value = parsedJson;
@@ -209,25 +216,32 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!resumeJsonString) throw new Error("Parsed Resume JSON is missing. Please upload a resume first.");
             if (!jobDesc) throw new Error("Job Description is missing. Please paste it in the textarea.");
 
-            setLoadingState(true);
+            setLoadingState(true, "Generating tailored resume and cover letter...");
             finalResumeOutputDiv.innerHTML = "";
             generatedCoverLetterTextarea.value = "";
-            showMessage("Generating tailored resume and cover letter...", 'info');
+            // showMessage is handled by setLoadingState for this initial message
 
             try {
                 let resumeJson = JSON.parse(resumeJsonString);
 
                 const tailorPrompt = `Act as a career coach. Rewrite the content of the following resume.json (especially "summary" and "experience" sections, and "duties" within experience) to align perfectly with the keywords and requirements of the provided job description. Return a JSON object with the *exact same structure* as the input resume.json. Do not add new top-level keys or change the existing schema. Ensure all string values are properly escaped. \n\nResume JSON:\n${JSON.stringify(resumeJson, null, 2)}\n\nJob Description:\n${jobDesc}`;
+                setLoadingState(true, "Tailoring resume with AI..."); // Update banner
                 const tailoredResumeJsonString = await callLLMAPI(tailorPrompt);
                 let tailoredResumeJson = JSON.parse(tailoredResumeJsonString);
 
                 renderHtmlResume(tailoredResumeJson, finalResumeOutputDiv);
-                showMessage("Tailored resume generated. Now generating cover letter...", 'info');
+                showMessage("Tailored resume generated. Now generating cover letter...", 'info'); // Keep this messageArea update
 
-                const coverLetterPrompt = `Generate a professional and customized cover letter based on the following tailored resume JSON and job description. The cover letter should be ready to send, filling in all placeholders. If critical information like the hiring manager's name or specific company address is missing and cannot be inferred, mention that such details might need to be added by the user. The tone should be enthusiastic and professional. Highlight key achievements and skills from the resume that match the job description. \n\nTailored Resume JSON:\n${JSON.stringify(tailoredResumeJson, null, 2)}\n\nJob Description:\n${jobDesc}`;
+                const coverLetterPrompt = `Generate a professional and customized cover letter based on the following tailored resume JSON and job description.
+If a hiring manager's name is not available or inferable from the provided data, use a generic greeting like "Dear Hiring Team," or "Dear [Company Name] Hiring Team,".
+If the sender's address or the company's specific address details are not present in the resume JSON or job description, omit these address blocks entirely or use very generic placeholders like "[Your Street Address, City, Postal Code]" and "[Company Street Address, City, Postal Code]" and clearly indicate these need user review. Do not use obvious placeholders like "[Hiring Manager Name]" or "[Recipient Address]".
+The primary goal is to produce a letter that is as ready-to-send as possible, minimizing visible placeholders for missing information.
+The tone should be enthusiastic and professional. Highlight key achievements and skills from the resume that match the job description.
+\n\nTailored Resume JSON:\n${JSON.stringify(tailoredResumeJson, null, 2)}\n\nJob Description:\n${jobDesc}`;
+                setLoadingState(true, "Generating cover letter with AI..."); // Update banner
                 const coverLetterText = await callLLMAPI(coverLetterPrompt);
                 generatedCoverLetterTextarea.value = coverLetterText;
-                showMessage("Tailored resume and cover letter generated successfully!", 'info');
+                showMessage("Tailored resume and cover letter generated successfully!", 'info'); // Keep this messageArea update
 
             } catch (error) {
                 console.error("Error during Phase 2 processing (API calls/JSON parsing):", error);
@@ -330,71 +344,85 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadResumeButton = document.getElementById('downloadResumeButton');
     const downloadCoverLetterButton = document.getElementById('downloadCoverLetterButton');
 
-    downloadResumeButton.addEventListener('click', () => {
+    downloadResumeButton.addEventListener('click', async () => {
         const resumeRenderDiv = finalResumeOutputDiv.querySelector('.resume-render');
         if (!resumeRenderDiv || !resumeRenderDiv.innerHTML.trim()) {
             showMessage("No resume content available to download.", 'error');
             return;
         }
 
-        if (typeof html2pdf === 'undefined') {
-            showMessage("PDF generation library is not loaded. Please refresh.", 'error');
+        if (typeof window.jspdf === 'undefined' || typeof window.html2canvas === 'undefined') {
+            showMessage("PDF generation libraries (jsPDF or html2canvas) are not loaded. Please refresh.", 'error');
+            console.error("jsPDF or html2canvas is not loaded.");
             return;
         }
 
-        showMessage("Generating PDF, please wait...", 'info');
+        setLoadingState(true, "Generating PDF, please wait...");
 
-        // 1. Create a temporary, hidden container for printing.
-        const printContainer = document.createElement('div');
-        printContainer.style.position = 'fixed';
-        printContainer.style.left = '-9999px';
-        printContainer.style.top = '0px';
+        try {
+            // Ensure the element is visible for accurate canvas capture, even if off-screen
+            const clone = resumeRenderDiv.cloneNode(true);
+            clone.style.position = 'absolute';
+            clone.style.left = '-9999px';
+            clone.style.top = '0px';
+            clone.style.width = '8.5in'; // Standard letter width for better scaling
+            clone.style.padding = '0.5in'; // Simulate margins
+            clone.style.boxSizing = 'border-box';
+            document.body.appendChild(clone);
 
-        // 2. Define all necessary CSS styles as a string.
-        const styles = `
-            body { font-family: Arial, sans-serif; color: #333; }
-            .resume-render { padding: 0; margin: 0; background: #fff; }
-            .resume-render h1, .resume-render h2, .resume-render h3 { margin-top: 1.2em; margin-bottom: 0.6em; }
-            .resume-render h1 { font-size: 24px; color: #2c3e50; text-align: left; }
-            .resume-render .contact-details { font-size: 12px; color: #555; }
-            .resume-render .contact-details a { color: #3498db; text-decoration: none; }
-            .resume-render h2 { font-size: 18px; border-bottom: 2px solid #3498db; padding-bottom: 5px; color: #3498db; }
-            .resume-render .resume-section, .resume-render .job, .resume-render .education-entry, .resume-render .project-entry { margin-bottom: 15px; }
-            .resume-render h3 { font-size: 16px; color: #34495e; }
-            .resume-render .job-subheader { font-size: 13px; color: #7f8c8d; }
-            .resume-render ul { list-style-type: disc; margin-left: 20px; padding-left: 0; }
-            .resume-render li, .resume-render p { line-height: 1.4; margin-bottom: 0.5em; }
-        `;
+            const canvas = await html2canvas(clone, {
+                scale: 2, // Increase resolution
+                useCORS: true, // If there are any external images/fonts (though unlikely for this content)
+                logging: true,
+                onclone: (document) => {
+                    // This function is called when html2canvas clones the document
+                    // It's a good place to ensure styles are applied if they are dynamic
+                    // For this case, our styles are mostly static in style.css or applied directly
+                }
+            });
 
-        // 3. Get the inner HTML of the resume content.
-        const resumeContentHtml = resumeRenderDiv.innerHTML;
+            document.body.removeChild(clone); // Clean up the clone
 
-        // 4. Set the content of our hidden container.
-        printContainer.innerHTML = `<style>${styles}</style><div class="resume-render">${resumeContentHtml}</div>`;
+            const imgData = canvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'in',
+                format: 'letter'
+            });
 
-        // 5. Append the hidden container to the body so it becomes a live DOM element.
-        document.body.appendChild(printContainer);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const canvasWidth = canvas.width;
+            const canvasHeight = canvas.height;
+            const aspectRatio = canvasWidth / canvasHeight;
 
-        const opt = {
-            margin: 0.5,
-            filename: 'tailored_resume.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
-            pagebreak: { mode: 'avoid-all', before: '.resume-section' }
-        };
+            // Calculate the dimensions of the image in the PDF
+            let imgWidth = pdfWidth - 1; // 0.5 inch margin on each side
+            let imgHeight = imgWidth / aspectRatio;
 
-        // 6. Generate the PDF from the hidden element, ensuring .from() is before .set().
-        html2pdf().from(printContainer).set(opt).save().then(() => {
-            // 7. Remove the temporary container after generation is complete.
-            document.body.removeChild(printContainer);
+            // If the calculated height is more than the page height, scale by height instead
+            if (imgHeight > (pdfHeight -1) ) {
+                imgHeight = pdfHeight - 1; // 0.5 inch margin top/bottom
+                imgWidth = imgHeight * aspectRatio;
+            }
+
+            // Center the image on the page
+            const x = (pdfWidth - imgWidth) / 2;
+            const y = (pdfHeight - imgHeight) / 2;
+
+            pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
+            pdf.save('tailored_resume.pdf');
+
             showMessage("PDF Download Started.", 'info');
             setTimeout(clearMessage, 3000);
-        }).catch((err) => {
+
+        } catch (err) {
             console.error("PDF Generation failed:", err);
-            showMessage("An error occurred during PDF generation.", "error");
-            document.body.removeChild(printContainer); // Also remove on error
-        });
+            showMessage(`An error occurred during PDF generation: ${err.message || err}`, "error");
+        } finally {
+            setLoadingState(false);
+        }
     });
 
 
