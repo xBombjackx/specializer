@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageArea = document.getElementById('messageArea');
     const clearAllButton = document.getElementById('clearAllButton');
     const loadingBanner = document.getElementById('loadingBanner'); // Added for loading banner
-    const loadingBanner = document.getElementById('loadingBanner'); // Added for loading banner
 
     // --- LLM Configuration and API Key Storage ---
     const configInputs = {
@@ -240,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
 1.  **Sender's Contact Information:**
     *   At the top, include the sender's name, phone number, email, LinkedIn profile URL, and GitHub profile URL.
     *   ONLY include these details if they are present in the \`contactInfo\` section of the resume JSON.
-    *   DO NOT use bracketed placeholders like "[Your Name]" or "[Your Phone Number]". Directly use the values from the JSON. For example, if \`resumeJson.contactInfo.name\` is "Mike Joseph", the output should start with "Mike Joseph".
+    *   DO NOT use bracketed placeholders like "[Your Name]" or "[Your Phone Number]". Directly use the values from the JSON. For example, if \`resumeJson.contactInfo.name\` is "First Last", the output should start with "First Last".
     *   If a specific detail (e.g., GitHub URL) is missing from the JSON, omit that line entirely.
     *   Omit any sender's physical street address block unless it's explicitly provided in the resume JSON (it's usually not).
 
@@ -263,11 +262,11 @@ document.addEventListener('DOMContentLoaded', () => {
     *   Followed by the sender's name (from \`resumeJson.contactInfo.name\`).
 
 **Example of desired output for sender's contact info (if all details are in JSON):**
-Mike Joseph
+Firstname Lastname
 (123) 456-7890
-mike.joseph@email.com
-linkedin.com/in/mikejoseph
-github.com/mikejoseph
+first.last@email.com
+linkedin.com/in/firstlast
+github.com/hackername
 
 [Current Date]
 
