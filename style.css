@@ -141,6 +141,21 @@ button:disabled {
     margin-top: 10px;
 }
 
+/* Loading Banner Styles */
+.loading-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #3498db; /* Bright blue */
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 1.1em;
+    z-index: 1000; /* Ensure it's on top of other content */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
 /* Rendered Resume Styles (moved from script.js) */
 .resume-render {
     font-family: Arial, sans-serif;
