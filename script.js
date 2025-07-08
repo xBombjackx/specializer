@@ -232,6 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderHtmlResume(tailoredResumeJson, finalResumeOutputDiv);
                 showMessage("Tailored resume generated. Now generating cover letter...", 'info'); // Keep this messageArea update
 
+
                 const coverLetterPrompt = `Generate a professional and customized cover letter using the provided tailored resume JSON and job description.
 
 **Formatting Instructions:**
@@ -281,6 +282,7 @@ ${JSON.stringify(tailoredResumeJson, null, 2)}
 
 Job Description:
 ${jobDesc}`;
+
                 setLoadingState(true, "Generating cover letter with AI..."); // Update banner
                 const coverLetterText = await callLLMAPI(coverLetterPrompt);
                 generatedCoverLetterTextarea.value = coverLetterText;
@@ -427,9 +429,11 @@ ${jobDesc}`;
             document.body.removeChild(clone); // Clean up the clone
 
             const imgData = canvas.toDataURL('image/png');
+
             // Ensure we are using the correct reference for jsPDF v2.x loaded from UMD
             const { jsPDF } = window.jspdf; // For jsPDF v2.x UMD module
             const pdf = new jsPDF({ // This should now correctly reference the constructor
+
                 orientation: 'portrait',
                 unit: 'in',
                 format: 'letter'
