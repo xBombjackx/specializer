@@ -1,4 +1,551 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
 
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.gitignore
+index.html
+LICENSE
+package.json
+README.md
+script.js
+specializer.md
+style.css
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".gitignore">
+# Dependencies
+/node_modules
+
+# Wireit cache
+# https://github.com/google/wireit#setup
+/.wireit
+</file>
+
+<file path="package.json">
+{
+  "name": "specializer",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "wireit": "^0.14.12"
+  },
+  "scripts": {
+    "build": "wireit"
+  },
+  "wireit": {
+    "build": {
+      "command": "tsc",
+      "files": [
+        "src/**/*.ts",
+        "tsconfig.json"
+      ],
+      "output": [
+        "dist/**"
+      ],
+      "clean": "if-file-deleted"
+    }
+  }
+}
+</file>
+
+<file path="specializer.md">
+[2m
+ðŸ“¦ Repomix v1.1.0
+[22m
+[2mNo custom config found at repomix.config.json5, repomix.config.jsonc, repomix.config.json or global config at C:\Users\toast\AppData\Local\Repomix\repomix.config.json5, C:\Users\toast\AppData\Local\Repomix\repomix.config.jsonc, C:\Users\toast\AppData\Local\Repomix\repomix.config.json.
+You can add a config file for additional settings. Please check https://github.com/yamadashy/repomix for more information.[22m
+[36mâ ™[39m Collecting files...
+</file>
+
+<file path="LICENSE">
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <https://unlicense.org>
+</file>
+
+<file path="style.css">
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #eef1f5; /* Light grayish blue */
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    background-color: #fff;
+    padding: 25px 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #2c3e50; /* Dark blue */
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 2em;
+}
+
+h2 {
+    color: #3498db; /* Bright blue */
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    border-bottom: 2px solid #ecf0f1; /* Light gray border */
+    padding-bottom: 8px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+}
+
+input[type="text"],
+input[type="file"],
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #bdc3c7; /* Light silver */
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+    border-color: #3498db; /* Bright blue focus */
+    outline: none;
+}
+
+input[type="file"] {
+    padding: 10px; /* Specific padding for file input if needed */
+    background-color: #f8f9fa;
+}
+
+button {
+    background-color: #3498db; /* Bright blue */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+    margin-right: 10px; /* Space between buttons */
+}
+
+button:hover {
+    background-color: #2980b9; /* Darker blue */
+}
+
+button:disabled {
+    background-color: #a5c9e3; /* Lighter, disabled blue */
+    cursor: not-allowed;
+}
+
+.phase {
+    margin-bottom: 35px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #ecf0f1; /* Light gray separator */
+}
+
+.phase:last-child {
+    border-bottom: none;
+}
+
+#finalResumeOutput {
+    border: 1px solid #ddd;
+    padding: 20px;
+    min-height: 150px;
+    background-color: #fdfdfd; /* Very light gray, almost white */
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+#generatedCoverLetter {
+    border: 1px solid #ddd;
+    padding: 15px;
+    min-height: 150px;
+    background-color: #fdfdfd;
+    font-family: monospace; /* Keep monospace for pre-like formatting if needed */
+    border-radius: 5px;
+    white-space: pre-wrap; /* Ensure cover letter formatting is respected */
+}
+
+.hidden {
+    display: none;
+}
+
+.error-message {
+    color: #e74c3c; /* Red */
+    background-color: #fbecec;
+    border: 1px solid #e74c3c;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.info-message {
+    color: #3498db; /* Blue */
+    background-color: #eaf6ff;
+    border: 1px solid #3498db;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.button-group {
+    margin-top: 10px;
+}
+
+/* Rendered Resume Styles (moved from script.js) */
+.resume-render {
+    font-family: Arial, sans-serif;
+    color: #333;
+    padding: 20px;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+    background: #fff;
+    border-radius: 5px;
+}
+
+.resume-render h1 {
+    font-size: 24px;
+    margin-bottom: 0;
+    color: #2c3e50;
+    text-align: left; /* Override general h1 */
+}
+
+.resume-render .contact-details {
+    font-size: 12px;
+    margin-top: 5px;
+    color: #555;
+}
+
+.resume-render .contact-details a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.resume-render .contact-details a:hover {
+    text-decoration: underline;
+}
+
+.resume-render h2 {
+    font-size: 18px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 5px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #3498db;
+}
+
+.resume-render .resume-section {
+    margin-bottom: 15px;
+}
+
+.resume-render .job,
+.resume-render .education-entry,
+.resume-render .project-entry,
+.resume-render .certification-entry,
+.resume-render .award-entry {
+    margin-bottom: 15px;
+}
+
+.resume-render h3 {
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #34495e;
+}
+
+.resume-render .job-subheader,
+.resume-render .education-entry em {
+    font-size: 13px;
+    color: #7f8c8d;
+    margin-bottom: 8px;
+}
+
+.resume-render ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    padding-left: 0;
+}
+
+.resume-render li {
+    margin-bottom: 5px;
+    line-height: 1.4;
+}
+
+.resume-render p {
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+</file>
+
+<file path="README.md">
+# AI Resume Specializer & Cover Letter Generator
+
+This application helps you tailor your resume and generate a cover letter for specific job applications using the power of Large Language Models (LLMs). You can choose between Google Gemini, OpenAI (ChatGPT), and Anthropic Claude to power the generation process.
+
+## Features
+
+*   **Resume Upload:** Upload your existing resume in PDF (.pdf) or Word (.docx) format.
+*   **Job Description Input:** Paste the job description you're applying for.
+*   **LLM Selection:** Choose your preferred LLM provider:
+    *   Google Gemini
+    *   OpenAI (ChatGPT)
+    *   Anthropic Claude
+*   **API Key Management:** Input your API key for the chosen provider. The application also allows you to specify the model name you wish to use (pre-filled with common defaults).
+*   **Local Storage:** Your selected LLM, API keys, and model names are saved in your browser's `localStorage` for convenience, so you don't have to re-enter them every time.
+*   **Resume Parsing:** The application parses your resume's text and converts it into a structured JSON format. You can view and edit this JSON before further processing.
+*   **AI-Powered Tailoring:**
+    *   **Tailored Resume:** Generates a version of your resume with content (summary, experience) specifically rephrased and highlighted to match the job description.
+    *   **Tailored Cover Letter:** Creates a draft cover letter based on your resume and the target job.
+*   **Interactive Display:** View the tailored resume (rendered as HTML) and the generated cover letter directly in the app.
+*   **Downloadable Outputs:** Download your tailored resume and cover letter as styled HTML files, ready for review or further editing.
+
+## How to Use
+
+1.  **Select LLM Provider:**
+    *   Use the "Choose LLM Provider" dropdown to select either Google Gemini, OpenAI, or Anthropic Claude.
+2.  **Enter API Key & Model Name:**
+    *   The configuration section for your selected LLM will appear.
+    *   Enter your API Key in the designated field.
+    *   The "Model Name" field will be pre-filled with a common model (e.g., `gemini-1.5-flash-latest`, `gpt-3.5-turbo`, `claude-3-haiku-20240307`). You can change this if you want to use a different model from that provider.
+3.  **Upload Resume:**
+    *   In the "Phase 1: Parse Resume to JSON" section, click "Choose File" and select your resume (.pdf or .docx).
+    *   The application will extract the text and use the selected LLM to parse it into a JSON structure. This JSON will appear in the "Parsed Resume JSON (Editable)" textarea.
+    *   You can manually edit this JSON if needed (e.g., to correct parsing errors or add missing information).
+4.  **Paste Job Description:**
+    *   In the "Phase 2: Tailor Resume & Generate Cover Letter" section, paste the full job description into the "Paste Job Description" textarea.
+5.  **Generate:**
+    *   Click the "Generate Tailored Resume & Cover Letter" button.
+    *   The application will use the selected LLM to process your resume JSON and the job description.
+6.  **Review Output:**
+    *   The "Final Tailored Resume" section will display the AI-generated resume, rendered as HTML.
+    *   The "Generated Cover Letter" textarea will show the AI-generated cover letter text.
+7.  **Download:**
+    *   Click "Download Resume (HTML)" to save the tailored resume.
+    *   Click "Download Cover Letter (HTML)" to save the generated cover letter. Both will be saved as HTML files that attempt to use the application's styling.
+8.  **Clear All:**
+    *   Use the "Clear All & Start Over" button to reset all input fields, output areas, and clear stored API keys/settings from `localStorage`.
+
+## Getting API Keys
+
+You'll need an API key from the LLM provider you choose to use.
+
+*   **Google Gemini:**
+    1.  Go to [Google AI Studio](https://aistudio.google.com/).
+    2.  Sign in with your Google account.
+    3.  Click "Get API key" and follow the instructions to create a new API key.
+    4.  A common model suitable for many tasks (and often with a free tier for initial usage) is `gemini-1.5-flash-latest`.
+
+*   **OpenAI (ChatGPT):**
+    1.  Go to the [OpenAI Platform](https://platform.openai.com/).
+    2.  Sign up or log in.
+    3.  Navigate to the "API keys" section in your account settings (usually found by clicking your organization or profile icon).
+    4.  Create a new secret key. **Copy it immediately and store it safely, as OpenAI will not show it to you again.**
+    5.  A popular and cost-effective model is `gpt-3.5-turbo`. More advanced models like `gpt-4` or `gpt-4o` are also available but typically incur higher costs.
+
+*   **Anthropic Claude:**
+    1.  Go to the [Anthropic Console](https://console.anthropic.com/).
+    2.  Sign up or log in.
+    3.  Navigate to "Account" (often in the top right or left sidebar) and then find the "API Keys" section.
+    4.  Create a new API key.
+    5.  A fast and capable model, often with a good balance of performance and cost (and sometimes a free tier), is `claude-3-haiku-20240307`. Other models in the Claude 3 family include `claude-3-sonnet-20240229` and `claude-3-opus-20240229`.
+    6.  *Note:* The application automatically includes the required `anthropic-version` header (e.g., `2023-06-01`) for Claude API calls.
+
+**Important Note on Free Models & Model Names:**
+The model names provided above (e.g., `gemini-1.5-flash-latest`, `gpt-3.5-turbo`, `claude-3-haiku-20240307`) are examples of models often available with free introductory tiers or suitable for development purposes *at the time of this writing*. The availability, naming, and terms of free tiers can change frequently. Please always consult the LLM provider's official website, documentation, and pricing pages for the most current information on available models, their capabilities, and associated costs. The input fields in this application allow you to specify any model name compatible with the selected provider's API.
+
+## ⚠️ Security Warning
+
+**IMPORTANT:** This application stores your API keys in your browser's `localStorage`. `localStorage` is specific to your browser on your computer but is **not a secure vault for sensitive data** if:
+*   You are using a shared or public computer.
+*   Your browser has been compromised by malicious extensions or software.
+
+For personal use on your own trusted computer, storing API keys in `localStorage` can be convenient. However, be aware of the risks. **Avoid using this application with your API keys on public or untrusted machines.** If you are concerned, use it only with temporary or restricted-use API keys, or clear your keys after each session using the "Clear All & Start Over" button.
+
+## Technical Notes
+
+*   This is a client-side (frontend-only) application built with HTML, CSS, and vanilla JavaScript.
+*   It uses [pdf.js](https://mozilla.github.io/pdf.js/) for extracting text from PDF files locally in your browser.
+*   It uses [Mammoth.js](https://github.com/mwilliamson/mammoth.js) for extracting text from .docx files locally in your browser.
+*   All interactions with LLM APIs are made directly from your browser to the respective provider's servers. No backend server for this application is involved in processing your data or API keys beyond what your browser sends to the LLM.
+</file>
+
+<file path="index.html">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Generator & Tailor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>AI Resume Generator & Tailor</h1>
+
+        <div id="messageArea">
+            <!-- Error messages or info messages will be displayed here -->
+        </div>
+
+        <div class="phase">
+            <h2>Settings: Choose LLM & API Keys</h2>
+            <div>
+                <label for="llmSelection">Choose LLM Provider:</label>
+                <select id="llmSelection">
+                    <option value="gemini" selected>Google Gemini</option>
+                    <option value="openai">OpenAI (ChatGPT)</option>
+                    <option value="claude">Anthropic Claude</option>
+                </select>
+            </div>
+
+            <div id="geminiConfig" class="llm-config-group">
+                <label for="geminiApiKey">Google AI Studio API Key:</label>
+                <input type="text" id="geminiApiKey" name="geminiApiKey" placeholder="Enter your Gemini API key">
+                <label for="geminiModelName">Gemini Model Name:</label>
+                <input type="text" id="geminiModelName" name="geminiModelName" value="gemini-1.5-flash-latest">
+            </div>
+
+            <div id="openaiConfig" class="llm-config-group" style="display: none;">
+                <label for="openaiApiKey">OpenAI API Key:</label>
+                <input type="text" id="openaiApiKey" name="openaiApiKey" placeholder="Enter your OpenAI API key">
+                <label for="openaiModelName">OpenAI Model Name:</label>
+                <input type="text" id="openaiModelName" name="openaiModelName" value="gpt-3.5-turbo">
+            </div>
+
+            <div id="claudeConfig" class="llm-config-group" style="display: none;">
+                <label for="claudeApiKey">Anthropic API Key:</label>
+                <input type="text" id="claudeApiKey" name="claudeApiKey" placeholder="Enter your Anthropic API key">
+                <label for="claudeModelName">Claude Model Name:</label>
+                <input type="text" id="claudeModelName" name="claudeModelName" value="claude-3-haiku-20240307">
+                 <p style="font-size: 0.8em; margin-top: 5px;">Note: Claude API requires Anthropic-Version header (e.g., 2023-06-01). This is handled by the script.</p>
+            </div>
+        </div>
+
+        <div class="phase">
+            <h2>Phase 1: Parse Resume to JSON</h2>
+            <div>
+                <label for="resumeFile">Upload Resume (.pdf or .docx):</label>
+                <input type="file" id="resumeFile" name="resumeFile" accept=".pdf,.docx">
+            </div>
+            <div>
+                <label for="parsedResumeJson">Parsed Resume JSON (Editable):</label>
+                <textarea id="parsedResumeJson" rows="15" placeholder="Parsed JSON will appear here..."></textarea>
+            </div>
+        </div>
+
+        <div class="phase">
+            <h2>Phase 2: Tailor Resume & Generate Cover Letter</h2>
+            <div>
+                <label for="jobDescription">Paste Job Description:</label>
+                <textarea id="jobDescription" rows="10" placeholder="Paste job description here..."></textarea>
+            </div>
+            <div class="button-group">
+                <button id="generateTailoredResumeAndCoverLetter">Generate Tailored Resume & Cover Letter</button>
+                <button id="clearAllButton" type="button">Clear All & Start Over</button>
+            </div>
+        </div>
+
+        <div class="phase">
+            <h2>Final Tailored Resume</h2>
+            <div id="finalResumeOutput">
+                <!-- Rendered HTML resume will appear here -->
+            </div>
+            <button id="downloadResumeButton" type="button" style="margin-top: 10px;">Download Resume (HTML)</button>
+        </div>
+
+        <div class="phase">
+            <h2>Generated Cover Letter</h2>
+            <textarea id="generatedCoverLetter" rows="15" placeholder="Generated cover letter will appear here..." readonly></textarea>
+            <button id="downloadCoverLetterButton" type="button" style="margin-top: 10px;">Download Cover Letter (HTML)</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.5.0/mammoth.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@google/generative-ai/dist/index.min.js"></script>
+    <script src="script.js" type="module"></script>
+</body>
+</html>
+</file>
+
+<file path="script.js">
 // Ensure pdfjsLib is available
 if (typeof pdfjsLib === 'undefined') {
     console.error("pdf.js library is not loaded correctly.");
@@ -601,3 +1148,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 console.log("script.js loaded and parsed.");
+</file>
+
+</files>

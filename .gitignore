@@ -1,0 +1,6 @@
+# Dependencies
+/node_modules
+
+# Wireit cache
+# https://github.com/google/wireit#setup
+/.wireit
