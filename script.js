@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const generatedCoverLetterTextarea = document.getElementById('generatedCoverLetter');
     const messageArea = document.getElementById('messageArea');
     const clearAllButton = document.getElementById('clearAllButton');
-    const loadingBanner = document.getElementById('loadingBanner'); // Added for loading banner
+    const loadingBanner = document.getElementById('loadingBanner');
 
     // --- LLM Configuration and API Key Storage ---
     const configInputs = {
@@ -100,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isLoading) {
             loadingBanner.textContent = message;
             loadingBanner.style.display = 'block';
-            // Show specific message in messageArea if it's a direct user action
             if (document.activeElement === generateButton || (event && event.target === generateButton)) {
                 showMessage(message, 'info');
             } else if (document.activeElement === resumeFileInput || (event && event.target === resumeFileInput)) {
@@ -108,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else {
             loadingBanner.style.display = 'none';
-            // Clear messageArea only if no persistent error message is shown
             if (!messageArea.querySelector('.error-message')) {
                 clearMessage();
             }
@@ -185,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
                 const parserPrompt = `Analyze the following resume text and convert it into a JSON object with this exact structure: ${JSON.stringify(jsonSchema, null, 2)}. Ensure all string values are properly escaped. Here is the text: \n\n${rawText}`;
 
-                setLoadingState(true, "Sending to AI for parsing..."); // Update banner
+                setLoadingState(true, "Sending to AI for parsing...");
                 parsedResumeJsonTextarea.value = "Sending to AI for parsing...";
                 const parsedJson = await callLLMAPI(parserPrompt);
                 parsedResumeJsonTextarea.value = parsedJson;
@@ -219,72 +217,31 @@ document.addEventListener('DOMContentLoaded', () => {
             setLoadingState(true, "Generating tailored resume and cover letter...");
             finalResumeOutputDiv.innerHTML = "";
             generatedCoverLetterTextarea.value = "";
-            // showMessage is handled by setLoadingState for this initial message
 
             try {
                 let resumeJson = JSON.parse(resumeJsonString);
 
                 const tailorPrompt = `Act as a career coach. Rewrite the content of the following resume.json (especially "summary" and "experience" sections, and "duties" within experience) to align perfectly with the keywords and requirements of the provided job description. Return a JSON object with the *exact same structure* as the input resume.json. Do not add new top-level keys or change the existing schema. Ensure all string values are properly escaped. \n\nResume JSON:\n${JSON.stringify(resumeJson, null, 2)}\n\nJob Description:\n${jobDesc}`;
-                setLoadingState(true, "Tailoring resume with AI..."); // Update banner
+                setLoadingState(true, "Tailoring resume with AI...");
                 const tailoredResumeJsonString = await callLLMAPI(tailorPrompt);
                 let tailoredResumeJson = JSON.parse(tailoredResumeJsonString);
 
                 renderHtmlResume(tailoredResumeJson, finalResumeOutputDiv);
-                showMessage("Tailored resume generated. Now generating cover letter...", 'info'); // Keep this messageArea update
+                showMessage("Tailored resume generated. Now generating cover letter...", 'info');
 
                 const coverLetterPrompt = `Generate a professional and customized cover letter using the provided tailored resume JSON and job description.
-
 **Formatting Instructions:**
-
-1.  **Sender's Contact Information:**
-    *   At the top, include the sender's name, phone number, email, LinkedIn profile URL, and GitHub profile URL.
-    *   ONLY include these details if they are present in the \`contactInfo\` section of the resume JSON.
-    *   DO NOT use bracketed placeholders like "[Your Name]" or "[Your Phone Number]". Directly use the values from the JSON. For example, if \`resumeJson.contactInfo.name\` is "First Last", the output should start with "First Last".
-    *   If a specific detail (e.g., GitHub URL) is missing from the JSON, omit that line entirely.
-    *   Omit any sender's physical street address block unless it's explicitly provided in the resume JSON (it's usually not).
-
-2.  **Date:**
-    *   Include the current date after the sender's contact information.
-
-3.  **Recipient's Information:**
-    *   If the hiring manager's name can be inferred from the job description, use it (e.g., "Dear Mr. Smith,").
-    *   Otherwise, use a generic greeting like "Dear Hiring Team," or "Dear [Company Name from Job Description] Hiring Team,".
-    *   If the company's name is available in the job description, use it in the salutation.
-    *   Omit any recipient physical address block unless it's clearly and fully provided in the job description. Do not use placeholders like "[Company Street Address]".
-
-4.  **Body of the Letter:**
-    *   The tone should be enthusiastic and professional.
-    *   Highlight key achievements and skills from the resume that directly match the requirements in the job description.
-    *   Ensure the letter is customized and tailored, not generic.
-
-5.  **Closing:**
-    *   Use a professional closing (e.g., "Sincerely," or "Regards,").
-    *   Followed by the sender's name (from \`resumeJson.contactInfo.name\`).
-
-**Example of desired output for sender's contact info (if all details are in JSON):**
-Firstname Lastname
-(123) 456-7890
-first.last@email.com
-linkedin.com/in/firstlast
-github.com/hackername
-
-[Current Date]
-
-[Hiring Manager Name or Hiring Team]
-[Company Name, if known]
-...
-
+1.  **Sender's Contact Information:** At the top, include the sender's name, phone number, email, LinkedIn profile URL, and GitHub profile URL. ONLY include these details if they are present in the \`contactInfo\` section of the resume JSON. DO NOT use bracketed placeholders like "[Your Name]". Directly use the values from the JSON. If a specific detail (e.g., GitHub URL) is missing from the JSON, omit that line entirely.
+2.  **Date:** Include the current date after the sender's contact information.
+3.  **Recipient's Information:** If the hiring manager's name can be inferred from the job description, use it. Otherwise, use a generic greeting like "Dear Hiring Team,".
+4.  **Body of the Letter:** The tone should be enthusiastic and professional. Highlight key achievements and skills from the resume that directly match the requirements in the job description.
+5.  **Closing:** Use a professional closing (e.g., "Sincerely,"). Followed by the sender's name (from \`resumeJson.contactInfo.name\`).
 **DO NOT include bracketed placeholders for information that should come directly from the resume JSON (like name, phone, email).** The goal is a ready-to-send letter.
-
-Tailored Resume JSON:
-${JSON.stringify(tailoredResumeJson, null, 2)}
-
-Job Description:
-${jobDesc}`;
-                setLoadingState(true, "Generating cover letter with AI..."); // Update banner
+Tailored Resume JSON:\n${JSON.stringify(tailoredResumeJson, null, 2)}\n\nJob Description:\n${jobDesc}`;
+                setLoadingState(true, "Generating cover letter with AI...");
                 const coverLetterText = await callLLMAPI(coverLetterPrompt);
                 generatedCoverLetterTextarea.value = coverLetterText;
-                showMessage("Tailored resume and cover letter generated successfully!", 'info'); // Keep this messageArea update
+                showMessage("Tailored resume and cover letter generated successfully!", 'info');
 
             } catch (error) {
                 console.error("Error during Phase 2 processing (API calls/JSON parsing):", error);
@@ -387,80 +344,151 @@ ${jobDesc}`;
     const downloadResumeButton = document.getElementById('downloadResumeButton');
     const downloadCoverLetterButton = document.getElementById('downloadCoverLetterButton');
 
-    downloadResumeButton.addEventListener('click', async () => {
-        const resumeRenderDiv = finalResumeOutputDiv.querySelector('.resume-render');
-        if (!resumeRenderDiv || !resumeRenderDiv.innerHTML.trim()) {
-            showMessage("No resume content available to download.", 'error');
+    downloadResumeButton.addEventListener('click', () => {
+        const resumeJsonString = parsedResumeJsonTextarea.value.trim();
+        if (!resumeJsonString) {
+            showMessage("No resume JSON available to generate a PDF.", 'error');
             return;
         }
 
-        if (typeof window.jspdf === 'undefined' || typeof window.html2canvas === 'undefined') {
-            showMessage("PDF generation libraries (jsPDF or html2canvas) are not loaded. Please refresh.", 'error');
-            console.error("jsPDF or html2canvas is not loaded.");
+        if (typeof window.jspdf === 'undefined') {
+            showMessage("PDF generation library (jsPDF) is not loaded. Please refresh.", 'error');
             return;
         }
 
-        setLoadingState(true, "Generating PDF, please wait...");
+        let resumeJson;
+        try {
+            resumeJson = JSON.parse(resumeJsonString);
+        } catch (e) {
+            showMessage("The Parsed Resume JSON is not valid. Please correct it.", 'error');
+            return;
+        }
+
+        setLoadingState(true, "Generating Native PDF...");
 
         try {
-            // Ensure the element is visible for accurate canvas capture, even if off-screen
-            const clone = resumeRenderDiv.cloneNode(true);
-            clone.style.position = 'absolute';
-            clone.style.left = '-9999px';
-            clone.style.top = '0px';
-            clone.style.width = '8.5in'; // Standard letter width for better scaling
-            clone.style.padding = '0.5in'; // Simulate margins
-            clone.style.boxSizing = 'border-box';
-            document.body.appendChild(clone);
-
-            const canvas = await html2canvas(clone, {
-                scale: 2, // Increase resolution
-                useCORS: true, // If there are any external images/fonts (though unlikely for this content)
-                logging: true,
-                onclone: (document) => {
-                    // This function is called when html2canvas clones the document
-                    // It's a good place to ensure styles are applied if they are dynamic
-                    // For this case, our styles are mostly static in style.css or applied directly
-                }
-            });
-
-            document.body.removeChild(clone); // Clean up the clone
-
-            const imgData = canvas.toDataURL('image/png');
-            // Ensure we are using the correct reference for jsPDF v2.x loaded from UMD
-            const { jsPDF } = window.jspdf; // For jsPDF v2.x UMD module
-            const pdf = new jsPDF({ // This should now correctly reference the constructor
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
                 orientation: 'portrait',
                 unit: 'in',
                 format: 'letter'
             });
 
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = pdf.internal.pageSize.getHeight();
-            const canvasWidth = canvas.width;
-            const canvasHeight = canvas.height;
-            const aspectRatio = canvasWidth / canvasHeight;
+            // --- PDF Generation Logic ---
+            const margin = 0.75;
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const contentWidth = doc.internal.pageSize.getWidth() - (margin * 2);
+            let y = margin;
 
-            // Calculate the dimensions of the image in the PDF
-            let imgWidth = pdfWidth - 1; // 0.5 inch margin on each side
-            let imgHeight = imgWidth / aspectRatio;
+            const addPageIfNeeded = (spaceNeeded) => {
+                if (y + spaceNeeded > pageHeight - margin) {
+                    doc.addPage();
+                    y = margin;
+                }
+            };
 
-            // If the calculated height is more than the page height, scale by height instead
-            if (imgHeight > (pdfHeight - 1)) {
-                imgHeight = pdfHeight - 1; // 0.5 inch margin top/bottom
-                imgWidth = imgHeight * aspectRatio;
+            const renderSection = (title, contentRenderer) => {
+                if (y > margin) { y += 0.2; } // Add space between sections
+                addPageIfNeeded(0.5);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(14);
+                doc.text(title, margin, y);
+                doc.setLineWidth(0.01);
+                doc.line(margin, y + 0.05, margin + contentWidth, y + 0.05);
+                y += 0.25;
+                contentRenderer();
+            };
+
+            // 1. Header
+            const ci = resumeJson.contactInfo;
+            if (ci && ci.name) {
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(22);
+                doc.text(ci.name, margin, y);
+                y += 0.3;
+
+                let contactLine = [ci.email, ci.phone].filter(Boolean).join(' | ');
+                let linkLine = [ci.linkedin, ci.github, ci.portfolio].filter(Boolean).join(' | ');
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(10);
+                if (contactLine) { doc.text(contactLine, margin, y); y += 0.2; }
+                if (linkLine) { doc.text(linkLine, margin, y); y += 0.2; }
             }
 
-            // Center the image on the page
-            const x = (pdfWidth - imgWidth) / 2;
-            const y = (pdfHeight - imgHeight) / 2;
+            // 2. Summary
+            if (resumeJson.summary) {
+                renderSection("Summary", () => {
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(11);
+                    const summaryLines = doc.splitTextToSize(resumeJson.summary, contentWidth);
+                    addPageIfNeeded(summaryLines.length * 0.2);
+                    doc.text(summaryLines, margin, y);
+                    y += (summaryLines.length * 0.2);
+                });
+            }
 
-            pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
-            pdf.save('tailored_resume.pdf');
+            // 3. Experience
+            if (resumeJson.experience?.length) {
+                renderSection("Experience", () => {
+                    resumeJson.experience.forEach(job => {
+                        addPageIfNeeded(0.5);
+                        doc.setFont('helvetica', 'bold');
+                        doc.setFontSize(12);
+                        doc.text(`${job.jobTitle} - ${job.company}`, margin, y);
 
-            showMessage("PDF Download Started.", 'info');
-            setTimeout(clearMessage, 3000);
+                        doc.setFont('helvetica', 'italic');
+                        doc.setFontSize(10);
+                        doc.text([job.location, job.dates].filter(Boolean).join(' | '), doc.internal.pageSize.getWidth() - margin, y, { align: 'right' });
+                        y += 0.25;
 
+                        doc.setFont('helvetica', 'normal');
+                        doc.setFontSize(11);
+                        job.duties.forEach(duty => {
+                            const dutyLines = doc.splitTextToSize(`• ${duty}`, contentWidth - 0.2);
+                            addPageIfNeeded(dutyLines.length * 0.2);
+                            doc.text(dutyLines, margin + 0.1, y);
+                            y += (dutyLines.length * 0.2) + 0.05;
+                        });
+                        y += 0.1;
+                    });
+                });
+            }
+
+            // 4. Education
+            if (resumeJson.education?.length) {
+                renderSection("Education", () => {
+                    resumeJson.education.forEach(edu => {
+                        addPageIfNeeded(0.4);
+                        doc.setFont('helvetica', 'bold');
+                        doc.setFontSize(12);
+                        doc.text(edu.institution, margin, y);
+
+                        doc.setFont('helvetica', 'italic');
+                        doc.setFontSize(10);
+                        doc.text(edu.graduationDate, doc.internal.pageSize.getWidth() - margin, y, { align: 'right' });
+                        y += 0.2;
+
+                        doc.setFont('helvetica', 'normal');
+                        doc.text(`${edu.degree} ${edu.details ? `(${edu.details})` : ''}`, margin, y);
+                        y += 0.25;
+                    });
+                });
+            }
+
+            // 5. Skills
+            if (resumeJson.skills) {
+                renderSection("Skills", () => {
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(11);
+                    const skillsText = `Technical: ${resumeJson.skills.technical?.join(', ') || 'N/A'}`;
+                    const skillLines = doc.splitTextToSize(skillsText, contentWidth);
+                    addPageIfNeeded(skillLines.length * 0.2);
+                    doc.text(skillLines, margin, y);
+                    y += (skillLines.length * 0.2);
+                });
+            }
+
+            doc.save('tailored_resume.pdf');
         } catch (err) {
             console.error("PDF Generation failed:", err);
             showMessage(`An error occurred during PDF generation: ${err.message || err}`, "error");
