@@ -6,18 +6,18 @@ You can add a config file for additional settings. Please check https://github.c
 [36m⠙[39m Collecting files...
 [2K[1A[2K[G[36m⠹[39m Running security check...
 [2K[1A[2K[G[36m⠸[39m Processing files...
-[2K[1A[2K[G[36m⠼[39m Writing output file...
+[2K[1A[2K[G[36m⠼[39m Generating output...
 [2K[1A[2K[G[36m⠴[39m Calculating metrics...
 [2K[1A[2K[G[36m⠦[39m Calculating metrics...
 [2K[1A[2K[G[32m✔[39m Packing completed successfully!
 
 [37m📈 Top 5 Files by Token Count:[39m
 [2m──────────────────────────────────────────────────[22m
-[37m1. [39m [37mscript.js[39m [2m(6,552 tokens, 31,144 chars, 55.1%)[22m
-[37m2. [39m [37mREADME.md[39m [2m(1,750 tokens, 7,365 chars, 14.7%)[22m
-[37m3. [39m [37mstyle.css[39m [2m(1,346 tokens, 4,669 chars, 11.3%)[22m
-[37m4. [39m [37mindex.html[39m [2m(1,197 tokens, 4,916 chars, 10.1%)[22m
-[37m5. [39m [37mLICENSE[39m [2m(257 tokens, 1,233 chars, 2.2%)[22m
+[37m1. [39m [37mscript.js[39m [2m(6,585 tokens, 31,335 chars, 54.9%)[22m
+[37m2. [39m [37mREADME.md[39m [2m(1,750 tokens, 7,365 chars, 14.6%)[22m
+[37m3. [39m [37mstyle.css[39m [2m(1,346 tokens, 4,669 chars, 11.2%)[22m
+[37m4. [39m [37mindex.html[39m [2m(1,209 tokens, 4,980 chars, 10.1%)[22m
+[37m5. [39m [37mLICENSE[39m [2m(257 tokens, 1,233 chars, 2.1%)[22m
 
 [37m🔎 Security Check:[39m
 [2m──────────────────[22m
@@ -26,8 +26,8 @@ You can add a config file for additional settings. Please check https://github.c
 [37m📊 Pack Summary:[39m
 [2m────────────────[22m
 [37m  Total Files:[39m [37m8[39m files
-[37m Total Tokens:[39m [37m11,885[39m tokens
-[37m  Total Chars:[39m [37m52,374[39m chars
+[37m Total Tokens:[39m [37m12,001[39m tokens
+[37m  Total Chars:[39m [37m52,904[39m chars
 [37m       Output:[39m [37mrepomix-output.xml[39m
 [37m     Security:[39m [37m[37m✔ No suspicious files detected[37m[39m
 

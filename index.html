@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Resume Generator & Tailor</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="container">
         <h1>AI Resume Generator & Tailor</h1>
@@ -29,7 +31,7 @@
                 <label for="geminiApiKey">Google AI Studio API Key:</label>
                 <input type="text" id="geminiApiKey" name="geminiApiKey" placeholder="Enter your Gemini API key">
                 <label for="geminiModelName">Gemini Model Name:</label>
-                <input type="text" id="geminiModelName" name="geminiModelName" value="gemini-1.5-flash-latest">
+                <input type="text" id="geminiModelName" name="geminiModelName" value="gemini-2.5-flash">
             </div>
 
             <div id="openaiConfig" class="llm-config-group" style="display: none;">
@@ -44,7 +46,8 @@
                 <input type="text" id="claudeApiKey" name="claudeApiKey" placeholder="Enter your Anthropic API key">
                 <label for="claudeModelName">Claude Model Name:</label>
                 <input type="text" id="claudeModelName" name="claudeModelName" value="claude-3-haiku-20240307">
-                 <p style="font-size: 0.8em; margin-top: 5px;">Note: Claude API requires Anthropic-Version header (e.g., 2023-06-01). This is handled by the script.</p>
+                <p style="font-size: 0.8em; margin-top: 5px;">Note: Claude API requires Anthropic-Version header (e.g.,
+                    2023-06-01). This is handled by the script.</p>
             </div>
         </div>
 
@@ -77,20 +80,23 @@
             <div id="finalResumeOutput">
                 <!-- Rendered HTML resume will appear here -->
             </div>
-            <button id="downloadResumeButton" type="button" style="margin-top: 10px;">Download Resume (HTML)</button>
+            <button id="downloadResumeButton" type="button" style="margin-top: 10px;">Download Resume (PDF)</button>
         </div>
 
         <div class="phase">
             <h2>Generated Cover Letter</h2>
-            <textarea id="generatedCoverLetter" rows="15" placeholder="Generated cover letter will appear here..." readonly></textarea>
-            <button id="downloadCoverLetterButton" type="button" style="margin-top: 10px;">Download Cover Letter (HTML)</button>
+            <textarea id="generatedCoverLetter" rows="15" placeholder="Generated cover letter will appear here..."
+                readonly></textarea>
+            <button id="downloadCoverLetterButton" type="button" style="margin-top: 10px;">Download Cover Letter
+                (HTML)</button>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.5.0/mammoth.browser.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@google/generative-ai/dist/index.min.js"></script>
-    <script src="script.js" type="module"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
+
 </html>

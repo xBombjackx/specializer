@@ -1,14 +1,16 @@
 
+import { GoogleGenerativeAI } from "https://cdn.jsdelivr.net/npm/@google/generative-ai/+esm";
+
 // Ensure pdfjsLib is available
-if (typeof pdfjsLib === 'undefined') {
+if (typeof window.pdfjsLib === 'undefined') {
     console.error("pdf.js library is not loaded correctly.");
     // Potentially display an error to the user on the page
 } else {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 }
 
 // Ensure mammoth is available
-if (typeof mammoth === 'undefined') {
+if (typeof window.mammoth === 'undefined') {
     console.error("mammoth.js library is not loaded correctly.");
     // Potentially display an error to the user on the page
 }
@@ -163,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let rawText = '';
                 if (file.type === "application/pdf") {
                     const arrayBuffer = await file.arrayBuffer();
-                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                    const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                     for (let i = 1; i <= pdf.numPages; i++) {
                         const page = await pdf.getPage(i);
                         const textContent = await page.getTextContent();
@@ -171,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 } else if (file.name.endsWith(".docx")) {
                     const arrayBuffer = await file.arrayBuffer();
-                    const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+                    const result = await window.mammoth.extractRawText({ arrayBuffer: arrayBuffer });
                     rawText = result.value;
                 } else {
                     parsedResumeJsonTextarea.value = "Error: Unsupported file type. Please upload .pdf or .docx";
@@ -331,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let content = "";
             if (service === 'gemini') {
                 // Uses GoogleGenerativeAI SDK
-                const genAI = new google.generativeai.GoogleGenerativeAI(apiKey);
+                const genAI = new GoogleGenerativeAI(apiKey);
                 const model = genAI.getGenerativeModel({ model: modelName });
                 const result = await model.generateContent(promptText);
                 const response = await result.response;
@@ -551,21 +553,23 @@ document.addEventListener('DOMContentLoaded', () => {
             showMessage("No resume content available to download or content contains an error.", 'error');
             return;
         }
-        // The existing resume render already includes a div with class resume-render
-        // We just need to ensure it's a full HTML document and links the stylesheet.
-        const fullHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tailored Resume</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    ${resumeHtmlContent}
-</body>
-</html>`;
-        triggerDownload(fullHtml, 'tailored_resume.html');
+
+        if (typeof html2pdf === 'undefined') {
+            showMessage("PDF generation library (html2pdf.js) is not loaded. Please check your internet connection and refresh.", 'error');
+            console.error("html2pdf.js is not loaded.");
+            return;
+        }
+
+        showMessage("Generating PDF, please wait...", 'info');
+
+        const element = finalResumeOutputDiv.querySelector('.resume-render');
+        const opt = {
+            margin: 0.5,
+            filename: 'tailored_resume.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+        };
+        html2pdf().from(element).set(opt).save();
     });
 
     downloadCoverLetterButton.addEventListener('click', () => {
@@ -581,23 +585,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const fullHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generated Cover Letter</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generated Cover Letter</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="resume-render" style="padding: 20px; margin-top:20px;">  <!-- Re-use resume-render for similar styling -->
-            <h2>Cover Letter</h2>
-            <p>${prettyCoverLetterHtml}</p>
-        </div>
-    </div>
+<div class="container">
+<div class="resume-render" style="padding: 20px; margin-top:20px;">  <!-- Re-use resume-render for similar styling -->
+<h2>Cover Letter</h2>
+<p>${prettyCoverLetterHtml}</p>
+</div>
+</div>
 </body>
 </html>`;
         triggerDownload(fullHtml, 'generated_cover_letter.html');
     });
 
-});
-
-console.log("script.js loaded and parsed.");
+    console.log("script.js loaded and parsed.");
+})

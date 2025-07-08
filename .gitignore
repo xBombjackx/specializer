@@ -4,3 +4,26 @@
 # Wireit cache
 # https://github.com/google/wireit#setup
 /.wireit
+
+# Build output
+# As specified in your package.json wireit config
+/dist
+/build
+
+# Log files
+logs
+*.log
+npm-debug.log*
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
