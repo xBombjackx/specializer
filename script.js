@@ -232,12 +232,57 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderHtmlResume(tailoredResumeJson, finalResumeOutputDiv);
                 showMessage("Tailored resume generated. Now generating cover letter...", 'info'); // Keep this messageArea update
 
-                const coverLetterPrompt = `Generate a professional and customized cover letter based on the following tailored resume JSON and job description.
-If a hiring manager's name is not available or inferable from the provided data, use a generic greeting like "Dear Hiring Team," or "Dear [Company Name] Hiring Team,".
-If the sender's address or the company's specific address details are not present in the resume JSON or job description, omit these address blocks entirely or use very generic placeholders like "[Your Street Address, City, Postal Code]" and "[Company Street Address, City, Postal Code]" and clearly indicate these need user review. Do not use obvious placeholders like "[Hiring Manager Name]" or "[Recipient Address]".
-The primary goal is to produce a letter that is as ready-to-send as possible, minimizing visible placeholders for missing information.
-The tone should be enthusiastic and professional. Highlight key achievements and skills from the resume that match the job description.
-\n\nTailored Resume JSON:\n${JSON.stringify(tailoredResumeJson, null, 2)}\n\nJob Description:\n${jobDesc}`;
+
+                const coverLetterPrompt = `Generate a professional and customized cover letter using the provided tailored resume JSON and job description.
+
+**Formatting Instructions:**
+
+1.  **Sender's Contact Information:**
+    *   At the top, include the sender's name, phone number, email, LinkedIn profile URL, and GitHub profile URL.
+    *   ONLY include these details if they are present in the \`contactInfo\` section of the resume JSON.
+    *   DO NOT use bracketed placeholders like "[Your Name]" or "[Your Phone Number]". Directly use the values from the JSON. For example, if \`resumeJson.contactInfo.name\` is "Mike Joseph", the output should start with "Mike Joseph".
+    *   If a specific detail (e.g., GitHub URL) is missing from the JSON, omit that line entirely.
+    *   Omit any sender's physical street address block unless it's explicitly provided in the resume JSON (it's usually not).
+
+2.  **Date:**
+    *   Include the current date after the sender's contact information.
+
+3.  **Recipient's Information:**
+    *   If the hiring manager's name can be inferred from the job description, use it (e.g., "Dear Mr. Smith,").
+    *   Otherwise, use a generic greeting like "Dear Hiring Team," or "Dear [Company Name from Job Description] Hiring Team,".
+    *   If the company's name is available in the job description, use it in the salutation.
+    *   Omit any recipient physical address block unless it's clearly and fully provided in the job description. Do not use placeholders like "[Company Street Address]".
+
+4.  **Body of the Letter:**
+    *   The tone should be enthusiastic and professional.
+    *   Highlight key achievements and skills from the resume that directly match the requirements in the job description.
+    *   Ensure the letter is customized and tailored, not generic.
+
+5.  **Closing:**
+    *   Use a professional closing (e.g., "Sincerely," or "Regards,").
+    *   Followed by the sender's name (from \`resumeJson.contactInfo.name\`).
+
+**Example of desired output for sender's contact info (if all details are in JSON):**
+Mike Joseph
+(123) 456-7890
+mike.joseph@email.com
+linkedin.com/in/mikejoseph
+github.com/mikejoseph
+
+[Current Date]
+
+[Hiring Manager Name or Hiring Team]
+[Company Name, if known]
+...
+
+**DO NOT include bracketed placeholders for information that should come directly from the resume JSON (like name, phone, email).** The goal is a ready-to-send letter.
+
+Tailored Resume JSON:
+${JSON.stringify(tailoredResumeJson, null, 2)}
+
+Job Description:
+${jobDesc}`;
+
                 setLoadingState(true, "Generating cover letter with AI..."); // Update banner
                 const coverLetterText = await callLLMAPI(coverLetterPrompt);
                 generatedCoverLetterTextarea.value = coverLetterText;
@@ -384,8 +429,11 @@ The tone should be enthusiastic and professional. Highlight key achievements and
             document.body.removeChild(clone); // Clean up the clone
 
             const imgData = canvas.toDataURL('image/png');
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF({
+
+            // Ensure we are using the correct reference for jsPDF v2.x loaded from UMD
+            const { jsPDF } = window.jspdf; // For jsPDF v2.x UMD module
+            const pdf = new jsPDF({ // This should now correctly reference the constructor
+
                 orientation: 'portrait',
                 unit: 'in',
                 format: 'letter'
